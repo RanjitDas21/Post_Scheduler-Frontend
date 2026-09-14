@@ -469,35 +469,6 @@ return (
           )}
         </section>
 
-        {/* Needs Attention */}
-        {(partial.length || failed.length) > 0 && (
-          <section className="bg-white rounded-xl2 border border-cream-200 p-6">
-            <h3 className="font-semibold mb-4">
-              Needs attention
-            </h3>
-
-            <ul className="space-y-3 max-h-96 overflow-y-auto">
-              {[...partial, ...failed].map((post) => (
-                <PostCard
-                  key={post._id}
-                  post={post}
-                  onEdit={openEdit}
-                  onCancel={(id) =>
-                    action(id, cancelPost, "Post cancelled.")
-                  }
-                  onPublish={(id) =>
-                    action(id, publishNow, "Post is being published.")
-                  }
-                  onRetry={(id) =>
-                    action(id, retryPost, "Retry started.")
-                  }
-                  busy={busyId === post._id}
-                />
-              ))}
-            </ul>
-          </section>
-        )}
-
         {/* Published Posts */}
         <section className="bg-white rounded-xl2 border border-cream-200 p-6">
           <div className="flex items-center justify-between mb-4">
@@ -554,6 +525,37 @@ return (
             </ul>
           )}
         </section>
+
+        {/* Needs Attention */}
+        {(partial.length || failed.length) > 0 && (
+          <section className="bg-white rounded-xl2 border border-cream-200 p-6">
+            <h3 className="font-semibold mb-4">
+              Needs attention
+            </h3>
+
+            <ul className="space-y-3 max-h-96 overflow-y-auto">
+              {[...partial, ...failed].map((post) => (
+                <PostCard
+                  key={post._id}
+                  post={post}
+                  onEdit={openEdit}
+                  onCancel={(id) =>
+                    action(id, cancelPost, "Post cancelled.")
+                  }
+                  onPublish={(id) =>
+                    action(id, publishNow, "Post is being published.")
+                  }
+                  onRetry={(id) =>
+                    action(id, retryPost, "Retry started.")
+                  }
+                  busy={busyId === post._id}
+                />
+              ))}
+            </ul>
+          </section>
+        )}
+
+        
       </div>
     </div>
   </div>
