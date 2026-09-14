@@ -187,7 +187,18 @@ const SchedulerPage = () => {
     // }
     setSubmitting(true);
     try { await createPost(formData); resetForm(); flash("Post scheduled successfully."); }
-    catch (err) { setError(err.response?.data?.message || "Couldn't schedule that post."); }
+    // catch (err) { setError(err.response?.data?.message || "Couldn't schedule that post."); }
+    catch (err) {
+      console.error("SCHEDULER ERROR:", err);
+      console.error("SCHEDULER RESPONSE:", err.response?.data);
+      console.error("SCHEDULER STATUS:", err.response?.status);
+
+      setError(
+        err.response?.data?.message ||
+        err.message ||
+        "Couldn't schedule that post."
+      );
+    }
     finally { setSubmitting(false); }
   };
 
