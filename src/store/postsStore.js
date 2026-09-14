@@ -31,12 +31,22 @@ export const usePostsStore = create((set, get) => ({
     }
   },
 
-  createPost: async (formData, requestId = (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`)) => {
-    // Check FormData contents
-    // for (const [key, value] of formData.entries()) {
-    //   console.log(key, value);
-    // }
-    const { data } = await postsApi.create(formData, requestId);
+  // createPost: async (formData, requestId = (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`)) => {
+  //   // Check FormData contents
+  //   // for (const [key, value] of formData.entries()) {
+  //   //   console.log(key, value);
+  //   // }
+  //   const { data } = await postsApi.create(formData, requestId);
+
+  //   console.log(data);
+  //   await get().fetchPosts();
+  //   return data.post;
+  // },
+
+
+
+  createPost: async (formData) => {
+    const { data } = await postsApi.create(formData);
 
     console.log(data);
     await get().fetchPosts();

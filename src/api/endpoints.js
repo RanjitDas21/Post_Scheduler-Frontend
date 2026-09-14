@@ -18,12 +18,14 @@ export const accountsApi = {
 
 export const postsApi = {
   list: (params = {}) => api.get("/posts", { params }),
-  create: (formData, requestId) =>
-    api.post("/posts", formData, {
-      headers: {
-        ...(requestId ? { "Idempotency-Key": requestId } : {}),
-      },
-    }),
+  // create: (formData, requestId) =>
+  //   api.post("/posts", formData, {
+  //     headers: {
+  //       ...(requestId ? { "Idempotency-Key": requestId } : {}),
+  //     },
+  //   }),
+
+  create: (formData) => api.post("/posts", formData),
   update: (id, data) => api.patch(`/posts/${id}`, data),
   publishNow: (id) => api.post(`/posts/${id}/publish`),
   cancel: (id) => api.post(`/posts/${id}/cancel`),
