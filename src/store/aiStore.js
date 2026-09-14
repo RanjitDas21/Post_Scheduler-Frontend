@@ -17,15 +17,29 @@ export const useAIStore = create((set, get) => ({
     }
   },
 
-  generate: async ({ prompt, tone, withImage }) => {
-    set({ generating: true });
-    try {
-      const { data } = await aiApi.generate({ prompt, tone, withImage });
-      set((state) => ({ generations: [data.generation, ...state.generations], generating: false }));
-      return data.generation;
-    } catch (err) {
-      set({ generating: false });
-      throw err;
-    }
-  },
+  generate: async ({ prompt }) => {
+  set({ generating: true });
+
+  try {
+    const { data } = await aiApi.generate({
+      prompt,
+    });
+
+    set((state) => ({
+      generations: [
+        data.generation,
+        ...state.generations,
+      ],
+      generating: false,
+    }));
+
+    return data.generation;
+  } catch (err) {
+    set({
+      generating: false,
+    });
+
+    throw err;
+  }
+},
 }));

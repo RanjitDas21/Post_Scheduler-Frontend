@@ -7,8 +7,6 @@ import { useAIStore } from "../store/aiStore.js";
 import { useAccountsStore } from "../store/accountsStore.js";
 import { usePostsStore } from "../store/postsStore.js";
 
-const TONES = ["Professional", "Creative", "Funny", "Minimalist", "Excited"];
-
 const timeAgo = (dateStr) => {
   const diff = Date.now() - new Date(dateStr).getTime();
   const mins = Math.floor(diff / 60000);
@@ -25,8 +23,6 @@ const AIComposerPage = () => {
   const connectedPlatforms = [...new Set(accounts.filter((a) => a.status === "connected").map((a) => a.platform))];
 
   const [prompt, setPrompt] = useState("");
-  const [tone, setTone] = useState("Professional");
-  const [withImage, setWithImage] = useState(true);
   const [error, setError] = useState("");
   const [scheduling, setScheduling] = useState(null); // generation being scheduled
 
@@ -36,17 +32,28 @@ const AIComposerPage = () => {
   }, [fetchGenerations, fetchAccounts]);
 
   const handleGenerate = async (e) => {
-    e.preventDefault();
-    setError("");
-    if (!prompt.trim()) return setError("Tell us what you'd like to create.");
+  e.preventDefault();
+  setError("");
 
-    try {
-      await generate({ prompt, tone, withImage });
-      setPrompt("");
-    } catch (err) {
-      setError(err.response?.data?.message || "Generation failed. Try again.");
-    }
-  };
+  if (!prompt.trim()) {
+    return setError(
+      "Please describe the image you want to generate."
+    );
+  }
+
+  try {
+    await generate({
+      prompt,
+    });
+
+    setPrompt("");
+  } catch (err) {
+    setError(
+      err.response?.data?.message ||
+      "Image generation failed. Please try again."
+    );
+  }
+};
 
   return (
     <div>
@@ -66,19 +73,6 @@ const AIComposerPage = () => {
             className="w-full p-4 text-sm resize-none focus:outline-none"
           />
           <div className="flex items-center justify-between px-3 pb-2 pt-1">
-            <label className="flex items-center gap-2 text-sm text-ink-light cursor-pointer select-none">
-              <span>AI image</span>
-              <span className="relative inline-flex">
-                <input
-                  type="checkbox"
-                  checked={withImage}
-                  onChange={(e) => setWithImage(e.target.checked)}
-                  className="sr-only peer"
-                />
-                <span className="w-9 h-5 bg-cream-200 rounded-full peer-checked:bg-rust transition-colors" />
-                <span className="absolute left-0.5 top-0.5 h-4 w-4 bg-white rounded-full transition-transform peer-checked:translate-x-4" />
-              </span>
-            </label>
             <button
               type="submit"
               disabled={generating}
@@ -91,20 +85,6 @@ const AIComposerPage = () => {
         </form>
 
         {error && <p className="text-sm text-rust-600 mb-4 text-center">{error}</p>}
-
-        <div className="flex items-center justify-center flex-wrap gap-2 mb-10">
-          {TONES.map((t) => (
-            <button
-              key={t}
-              onClick={() => setTone(t)}
-              className={`text-sm font-medium px-4 py-1.5 rounded-full transition-colors ${
-                tone === t ? "bg-rust text-white" : "bg-white border border-cream-200 text-ink-light hover:border-rust-200"
-              }`}
-            >
-              {t}
-            </button>
-          ))}
-        </div>
 
         <div className="flex items-center gap-2 mb-4">
           <Clock size={15} className="text-ink-light" />
@@ -131,9 +111,6 @@ const AIComposerPage = () => {
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-ink-muted">{timeAgo(g.createdAt)}</span>
-                  <span className="text-xs font-medium text-rust-600 bg-rust-50 px-2 py-0.5 rounded-full">
-                    {g.tone}
-                  </span>
                 </div>
                 <button
                   onClick={() => setScheduling(g)}
@@ -191,7 +168,6 @@ const ScheduleGenerationModal = ({ generation, connectedPlatforms, onClose, onSc
     formData.append("scheduledAt", scheduledAt.toISOString());
     formData.append("timezone", Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC");
     formData.append("source", "ai");
-    formData.append("tone", generation.tone);
     if (generation.imageUrl) {
       formData.append("mediaUrl", generation.imageUrl);
       formData.append("mediaType", "image");
